@@ -54,7 +54,10 @@ Product _product({
     ProductGender.kids => (_kidsSizesUs, _kidsSizesUk, _kidsSizesEu),
   };
 
-  final imageUrl = _imagePool[imageIndex % _imagePool.length];
+  List<String> threeImages(int start) => List.generate(
+        3,
+        (i) => _imagePool[(start + i) % _imagePool.length],
+      );
 
   return Product(
     id: id,
@@ -64,7 +67,7 @@ Product _product({
     productCategory: productCategory,
     price: price,
     rating: rating,
-    images: images ?? [imageUrl],
+    images: images ?? threeImages(imageIndex),
     sizesUs: sizesUs,
     sizesUk: sizesUk,
     sizesEu: sizesEu,
@@ -83,11 +86,6 @@ final List<Product> products = [
     price: 290,
     rating: 4.5,
     imageIndex: 0,
-    images: [
-      _imagePool[0],
-      _imagePool[1],
-      _imagePool[2],
-    ],
   ),
   _product(
     id: 'wmns-runner',
