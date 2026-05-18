@@ -3,6 +3,7 @@ import 'package:shop/core/theme/app_theme.dart';
 import 'package:shop/screens/bookmark_list_screen.dart';
 import 'package:shop/screens/cart_screen.dart';
 import 'package:shop/screens/checkout_screen.dart';
+import 'package:shop/screens/app_start_screen.dart';
 import 'package:shop/screens/home_screen.dart';
 import 'package:shop/screens/product_detail_screen.dart';
 
@@ -14,6 +15,7 @@ class ShopApp extends StatelessWidget {
   static const String cartRoute = '/cart';
   static const String bookmarksRoute = '/bookmarks';
   static const String checkoutRoute = '/checkout';
+  static const String onboardingRoute = '/onboarding';
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +23,10 @@ class ShopApp extends StatelessWidget {
       title: 'Nike Shop',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      initialRoute: homeRoute,
+      home: const AppStartScreen(),
       routes: {
         homeRoute: (_) => const HomeScreen(),
+        onboardingRoute: (_) => const AppStartScreen(),
         cartRoute: (_) => const CartScreen(),
         bookmarksRoute: (_) => const BookmarkListScreen(),
         checkoutRoute: (_) => const CheckoutScreen(),
