@@ -243,14 +243,8 @@ class _ImageCarousel extends StatelessWidget {
 
   List<String> get _carouselImages {
     final source = product.images;
-    if (product.id == 'air-max') {
-      if (source.length >= 3) return source.take(3).toList();
-      return List<String>.generate(
-        3,
-        (i) => source[i % source.length],
-      );
-    }
-    return source;
+    if (source.length >= 3) return source.take(3).toList();
+    return List.generate(3, (i) => source[i % source.length]);
   }
 
   @override
