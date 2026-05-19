@@ -1,6 +1,6 @@
 {
-    "name": "shop",
-    "short_name": "shop",
+    "name": "Nike Shop",
+    "short_name": "Nike Shop",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
