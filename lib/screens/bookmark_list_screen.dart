@@ -20,29 +20,43 @@ class BookmarkListScreen extends StatelessWidget {
         .toList();
 
     return Scaffold(
-      appBar: const ShopTitledAppBar(title: 'Bookmarks'),
-      body: bookmarkedProducts.isEmpty
-          ? Center(
-              child: Text(
-                'No bookmarks yet',
-                style: theme.bodyLarge?.copyWith(
-                  color: AppColors.secondaryText,
-                ),
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(20),
-              itemCount: bookmarkedProducts.length,
-              itemBuilder: (context, index) {
-                final product = bookmarkedProducts[index];
-                final line = CartLine(
-                  product: product,
-                  size: product.sizesUs.first,
-                  region: SizeRegion.us,
-                );
-                return CartItemTile(line: line, showQuantity: false);
-              },
+      appBar: const ShopLogoAppBar(showBack: true, showCart: true),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
+            child: Text(
+              'Bookmarks',
+              style: theme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
             ),
+          ),
+          Expanded(
+            child: bookmarkedProducts.isEmpty
+                ? Center(
+                    child: Text(
+                      'No bookmarks yet',
+                      style: theme.bodyLarge?.copyWith(
+                        color: AppColors.secondaryText,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    itemCount: bookmarkedProducts.length,
+                    itemBuilder: (context, index) {
+                      final product = bookmarkedProducts[index];
+                      final line = CartLine(
+                        product: product,
+                        size: product.sizesUs.first,
+                        region: SizeRegion.us,
+                      );
+                      return CartItemTile(line: line, showQuantity: false);
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
