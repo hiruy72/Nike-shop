@@ -3,10 +3,11 @@ import 'package:shop/app.dart';
 import 'package:shop/core/theme/app_colors.dart';
 import 'package:shop/data/mock_data.dart';
 import 'package:shop/models/product.dart';
-import 'package:shop/models/product_category.dart';
-import 'package:shop/widgets/category_sections.dart';
-import 'package:shop/widgets/shop_app_bar.dart';
+import 'package:shop/models/product_filter_state.dart';
+import 'package:shop/utils/product_filter_logic.dart';
+import 'package:shop/widgets/master_filter_bar.dart';
 import 'package:shop/widgets/product_card.dart';
+import 'package:shop/widgets/shop_app_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,26 +17,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  ProductGender? _selectedGender;
-  ProductCategory? _selectedCategory;
-  String _searchQuery = '';
+  ProductFilterState _filter = const ProductFilterState();
+  final _searchController = TextEditingController();
 
-  List<Product> get _filteredProducts {
-    return products.where((p) {
-      final matchesGender =
-          _selectedGender == null || p.gender == _selectedGender;
-      final matchesCategory = _selectedCategory == null ||
-          p.productCategory == _selectedCategory;
-      final matchesSearch = _searchQuery.isEmpty ||
-          p.name.toLowerCase().contains(_searchQuery.toLowerCase());
-      return matchesGender && matchesCategory && matchesSearch;
-    }).toList();
+  List<Product> get _filteredProducts =>
+      ProductFilterLogic.apply(products, _filter);
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
-  void _onGenderChanged(ProductGender? gender) {
+  void _clearFilters() {
     setState(() {
-      _selectedGender = gender;
-      _selectedCategory = null;
+      _filter = const ProductFilterState();
+      _searchController.clear();
     });
   }
 
@@ -69,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const SizedBox(height: 20),
                   TextField(
-                    onChanged: (v) => setState(() => _searchQuery = v),
+                    controller: _searchController,
+                    onChanged: (v) =>
+                        setState(() => _filter = _filter.copyWith(search: v)),
                     decoration: InputDecoration(
                       hintText: 'Search shoes...',
                       hintStyle: TextStyle(
@@ -93,27 +92,57 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           SliverToBoxAdapter(
-            child: CategorySections(
-              selectedGender: _selectedGender,
-              selectedCategory: _selectedCategory,
-              onGenderChanged: _onGenderChanged,
-              onCategoryChanged: (category) =>
-                  setState(() => _selectedCategory = category),
-              onClearAll: () => setState(() {
-                _selectedGender = null;
-                _selectedCategory = null;
-              }),
+            child: MasterFilterBar(
+              filter: _filter,
+              onFilterChanged: (f) => setState(() => _filter = f),
+              onClearAll: _clearFilters,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+              child: Text(
+                '${filtered.length} styles found',
+                style: theme.bodyMedium?.copyWith(
+                  color: AppColors.secondaryText,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
           ),
           if (filtered.isEmpty)
-            const SliverFillRemaining(
+            SliverFillRemaining(
               hasScrollBody: false,
-              child: Center(child: Text('No products in this category')),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.search_off,
+                      size: 48,
+                      color: AppColors.secondaryText.withValues(alpha: 0.5),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No matches',
+                      style: theme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextButton(
+                      onPressed: _clearFilters,
+                      child: const Text('Clear filters'),
+                    ),
+                  ],
+                ),
+              ),
             )
           else
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
               sliver: SliverGrid(
+                key: ValueKey('grid_${filtered.length}_${_filter.hashCode}'),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 20,
