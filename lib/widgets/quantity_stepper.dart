@@ -49,13 +49,13 @@ class _StepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: isAccent ? AppColors.accent : AppColors.cardBackground,
-      borderRadius: BorderRadius.circular(8),
+      shape: const CircleBorder(),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        customBorder: const CircleBorder(),
         child: SizedBox(
-          width: 32,
-          height: 32,
+          width: 36,
+          height: 36,
           child: Icon(
             icon,
             size: 18,

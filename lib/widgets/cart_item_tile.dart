@@ -27,36 +27,83 @@ class CartItemTile extends StatelessWidget {
         line.product.images.isNotEmpty ? line.product.images.first : null;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 80,
-            height: 80,
-            child: ProductImage(imageUrl: imageUrl),
+          Container(
+            width: 88,
+            height: 88,
+            decoration: BoxDecoration(
+              color: AppColors.cardBackground,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: ProductImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                fillParent: true,
+              ),
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  line.product.name,
-                  style: theme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            line.product.name,
+                            style: theme.titleSmall
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Size ${line.size}',
+                            style: theme.bodySmall?.copyWith(
+                              color: AppColors.secondaryText,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () => bookmarks.toggle(line.product),
+                      icon: Icon(
+                        isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 8),
                 Text(
                   '\$${line.product.price.toStringAsFixed(2)}',
-                  style: theme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                  style: theme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 if (showQuantity) ...[
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   QuantityStepper(
                     quantity: line.quantity,
                     onIncrement: () => cart.increment(line.id),
@@ -64,13 +111,6 @@ class CartItemTile extends StatelessWidget {
                   ),
                 ],
               ],
-            ),
-          ),
-          IconButton(
-            onPressed: () => bookmarks.toggle(line.product),
-            icon: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: AppColors.accent,
             ),
           ),
         ],
