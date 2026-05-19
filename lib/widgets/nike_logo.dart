@@ -2,45 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:shop/core/theme/app_colors.dart';
 
 class NikeLogo extends StatelessWidget {
-  const NikeLogo({super.key, this.height = 24});
+  const NikeLogo({super.key, this.height = 22, this.color});
 
   final double height;
+  final Color? color;
+
+  static const _assetPath = 'assets/images/nike_swoosh.png';
 
   @override
   Widget build(BuildContext context) {
-    return CustomPaint(
-      size: Size(height * 2.8, height),
-      painter: _SwooshPainter(),
+    final width = height * 3.2;
+    final image = Image.asset(
+      _assetPath,
+      height: height,
+      width: width,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.high,
+      isAntiAlias: true,
+    );
+
+    final logo = color == null
+        ? image
+        : ColorFiltered(
+            colorFilter: ColorFilter.mode(
+              color ?? AppColors.primary,
+              BlendMode.srcIn,
+            ),
+            child: image,
+          );
+
+    return SizedBox(
+      width: width,
+      height: height,
+      child: logo,
     );
   }
-}
-
-class _SwooshPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.primary
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(size.width * 0.05, size.height * 0.55)
-      ..quadraticBezierTo(
-        size.width * 0.35,
-        size.height * 0.15,
-        size.width * 0.95,
-        size.height * 0.35,
-      )
-      ..quadraticBezierTo(
-        size.width * 0.55,
-        size.height * 0.75,
-        size.width * 0.05,
-        size.height * 0.55,
-      )
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
